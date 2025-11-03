@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Научный калькулятор</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'calc-bg': '#f3f3f3',
+              'calc-display-bg': '#f9f9f9',
+              'calc-btn-light': '#fafafa',
+              'calc-btn-dark': '#f0f0f0',
+              'calc-btn-accent': '#8ab4f7',
+              'calc-btn-accent-hover': '#7a9edb',
+              'calc-text': '#202124',
+              'calc-text-secondary': '#5f6368',
+            },
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-calc-bg min-h-screen font-sans text-calc-text flex flex-col items-center justify-center p-2 sm:p-4">
+    <main class="flex flex-col md:flex-row w-full max-w-5xl bg-white shadow-2xl rounded-lg overflow-hidden">
+      
+      <!-- Калькулятор -->
+      <div class="flex-grow p-1 sm:p-2">
+        <div class="flex flex-col h-full bg-calc-bg p-2 rounded-lg">
+          <div class="bg-calc-display-bg rounded p-4 mb-2 text-right flex flex-col justify-end min-h-[100px] relative">
+            <div id="memory-indicator" class="absolute top-2 left-3 font-bold text-calc-text-secondary hidden">M</div>
+            <div id="previous-operand" class="text-calc-text-secondary text-xl break-all h-8"></div>
+            <div id="current-operand" class="text-calc-text text-4xl font-semibold break-all">0</div>
+          </div>
+          <div id="buttons-grid" class="grid grid-cols-5 gap-1 sm:gap-2 flex-grow">
+            <!-- Память -->
+            <button data-value="memory-clear" data-type="memory" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Очистить память (MC)">MC</button>
+            <button data-value="memory-recall" data-type="memory" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Вывести из памяти (MR)">MR</button>
+            <button data-value="memory-add" data-type="memory" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Прибавить к памяти (M+)">M+</button>
+            <button data-value="memory-subtract" data-type="memory" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Вычесть из памяти (M-)">M-</button>
+            <button data-value="memory-store" data-type="memory" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Сохранить в память (MS)">MS</button>
+
+            <!-- Функции -->
+            <button id="angle-mode-btn" data-value="toggle-angle-mode" data-type="action" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Переключить радианы/градусы">RAD</button>
+            <button data-value="^2" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Квадрат">x²</button>
+            <button data-value="^" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Степень">xʸ</button>
+            <button data-value="sin(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Синус">sin</button>
+            <button data-value="cos(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Косинус">cos</button>
+            <button data-value="tan(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Тангенс">tan</button>
+            <button data-value="sqrt(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Квадратный корень">√</button>
+            <button data-value="10^" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Десять в степени X">10ˣ</button>
+            <button data-value="log(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Десятичный логарифм">log</button>
+            <button data-value="ln(" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Натуральный логарифм">ln</button>
+            
+            <!-- Операторы и действия -->
+            <button data-value="!" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Факториал">n!</button>
+            <button data-value="(" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Открывающая скобка">(</button>
+            <button data-value=")" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Закрывающая скобка">)</button>
+            <button data-value="clear" data-type="action" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Очистить все (C)">C</button>
+            <button data-value="backspace" data-type="action" class="calc-btn bg-calc-btn-dark hover:bg-gray-300 text-2xl" title="Назад">⌫</button>
+
+            <!-- Числа и операторы -->
+            <button data-value="pi" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Число Пи (π)">π</button>
+            <button data-value="/" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Деление">÷</button>
+            <button data-value="7" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Семь">7</button>
+            <button data-value="8" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Восемь">8</button>
+            <button data-value="9" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Девять">9</button>
+            <button data-value="*" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Умножение">×</button>
+            <button data-value="e" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Число Эйлера (e)">e</button>
+            <button data-value="4" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Четыре">4</button>
+            <button data-value="5" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Пять">5</button>
+            <button data-value="6" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Шесть">6</button>
+            <button data-value="-" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Вычитание">−</button>
+            <button data-value="%" data-type="function" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Процент">%</button>
+            <button data-value="1" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Один">1</button>
+            <button data-value="2" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Два">2</button>
+            <button data-value="3" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Три">3</button>
+            <button data-value="+" data-type="operator" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Сложение">+</button>
+            <button data-value="negate" data-type="action" class="calc-btn bg-calc-btn-dark hover:bg-gray-300" title="Сменить знак">+/-</button>
+            <button data-value="0" data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Ноль">0</button>
+            <button data-value="." data-type="number" class="calc-btn bg-calc-btn-light hover:bg-gray-200 font-medium" title="Десятичная точка">.</button>
+            <button data-value="equals" data-type="action" class="calc-btn col-span-2 bg-calc-btn-accent hover:bg-calc-btn-accent-hover text-white" title="Равно">=</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- История -->
+      <div id="history-panel" class="w-full md:w-80 lg:w-96 transition-all duration-300">
+        <div class="bg-calc-bg h-full flex flex-col p-2 rounded-lg">
+          <div class="flex justify-between items-center mb-2 p-2">
+            <h2 class="text-xl font-semibold text-calc-text">История</h2>
+            <button id="toggle-history-btn" class="p-2 rounded-full hover:bg-gray-200 md:hidden" title="Скрыть/показать историю">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <div id="history-content" class="flex-grow overflow-y-auto pr-2">
+            <!-- Элементы истории будут вставлены здесь -->
+          </div>
+          <div id="clear-history-container" class="p-2 mt-auto hidden">
+            <button id="clear-history-btn" class="w-full flex justify-center items-center gap-2 py-2 px-4 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors" title="Очистить всю историю вычислений">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              Очистить историю
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center text-calc-text-secondary mt-4 text-sm">
+      <p>Научный калькулятор на чистом JS</p>
+    </footer>
+
+    <script type="module" src="/index.js"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
